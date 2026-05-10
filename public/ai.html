@@ -1,1 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>School Portal // AI Assistant</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<style>
+    :root {
+        --scp-bg: #000;
+        --scp-green: #3fbf3f;
+        --scp-green-soft: #6fdc6f;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        background-color: var(--scp-bg);
+        font-family: Arial, sans-serif;
+        color: var(--scp-green);
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* HEADER */
+    #header {
+        width: 100%;
+        border-bottom: 2px solid var(--scp-green);
+        padding: 18px 40px;
+        text-align: center;
+        background: #000;
+    }
+    #header-title { font-size: 28px; font-weight: bold; letter-spacing: 8px; }
+    #header-sub { font-size: 10px; letter-spacing: 2px; color: var(--scp-green-soft); margin-top: 5px; }
+
+    /* NAVBAR */
+    #navbar {
+        width: 100%;
+        display: flex;
+        border-bottom: 1px solid var(--scp-green);
+        background: #000;
+    }
+    .nav-btn {
+        padding: 10px 18px;
+        background: transparent;
+        border: none;
+        color: var(--scp-green-soft);
+        font-size: 11px;
+        font-weight: bold;
+        letter-spacing: 2px;
+    }
+    .nav-btn.active { color: var(--scp-green); }
+
+    #model-select {
+        background: transparent;
+        border: 1px solid var(--scp-green);
+        color: var(--scp-green-soft);
+        font-size: 11px;
+        padding: 4px 8px;
+        margin-left: 16px;
+        border-radius: 3px;
+    }
+
+    #nav-refresh {
+        margin-left: auto;
+        padding: 10px 14px;
+        background: transparent;
+        border: none;
+        color: var(--scp-green-soft);
+        font-size: 11px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    /* MAIN */
+    #main {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    /* MESSAGES */
+    #messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .msg-row { display: flex; }
+    .msg-row.user { justify-content: flex-end; }
+    .msg-row.assistant { justify-content: flex-start; }
+
+    .msg-bubble {
+        max-width: 75%;
+        padding: 11px 15px;
+        border: 1px solid var(--scp-green);
+        font-size: 13px;
+        line-height: 1.65;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+    .msg-row.user .msg-bubble {
+        border-radius: 8px 8px 0 8px;
+        background: rgba(63,191,63,0.1);
+    }
+    .msg-row.assistant .msg-bubble {
+        border-radius: 8px 8px 8px 0;
+        background: rgba(63,191,63,0.05);
+    }
+
+    .msg-label {
+        font-size: 10px;
+        opacity: 0.55;
+        margin-bottom: 5px;
+        letter-spacing: 2px;
+    }
+
+    #thinking { display: none; }
+
+    /* INPUT */
+    #input-area {
+        border-top: 1px solid var(--scp-green);
+        padding: 14px 20px;
+        background: #000;
+    }
+    #input-row { display: flex; gap: 10px; align-items: flex-end; }
+
+    #msg-input {
+        flex: 1;
+        background: rgba(63,191,63,0.05);
+        border: 1px solid var(--scp-green);
+        border-radius: 3px;
+        color: var(--scp-green);
+        padding: 9px 12px;
+        resize: none;
+    }
+
+    #send-btn {
+        background: rgba(63,191,63,0.15);
+        border: 1px solid var(--scp-green);
+        color: var(--scp-green);
+        padding: 9px 20px;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: bold;
+        letter-spacing: 2px;
+    }
+</style>
+</head>
+
+<body>
+
+<div id="header">
+    <div id="header-title">SCHOOL PORTAL</div>
+    <div id="header-sub">// AI ASSISTANT //</div>
+</div>
+
+<div id="navbar">
+    <button class="nav-btn active">AI</button>
+
+    <select id="model-select">
+        <option value="gemini">GEMINI</option>
+        <option value="copilot">COPILOT</option>
+        <option value="groq">GROQ (FREE)</option>
+    </select>
+
+    <button id="nav-refresh" onclick="location.reload()">⟳</button>
+</div>
+
+<div id="main">
+
+    <div id="messages">
+        <div class="msg-row assistant">
+            <div class="msg-bubble">
+                <div class="msg-label">▶ AI_ASSISTANT</div>
+                // SYSTEM ONLINE //
+
+Hello Joshua.  
+How can I help you today?
+            </div>
+        </div>
+
+        <div class="msg-row assistant" id="thinking">
+            <div class="msg-bubble">
+                <div class="msg-label">▶ AI_ASSISTANT</div>
+                Processing...
+            </div>
+        </div>
+    </div>
+
+    <div id="input-area">
+        <div id="input-row">
+            <textarea id="msg-input" rows="1" placeholder="TYPE YOUR QUERY..." onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+            <button id="send-btn" onclick="sendMessage()" disabled>▶ SEND</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+let history = [];
+let loading = false;
+
+const messagesEl = document.getElementById('messages');
+const thinkingEl = document.getElementById('thinking');
+const inputEl = document.getElementById('msg-input');
+const sendBtn = document.getElementById('send-btn');
+const modelSelect = document.getElementById('model-select');
+
+function addMessage(role, content) {
+    const row = document.createElement('div');
+    row.className = 'msg-row ' + role;
+
+    const bubble = document.createElement('div');
+    bubble.className = 'msg-bubble';
+
+    if (role === 'assistant') {
+        const lbl = document.createElement('div');
+        lbl.className = 'msg-label';
+        lbl.textContent = '▶ AI_ASSISTANT';
+        bubble.appendChild(lbl);
+    }
+
+    bubble.appendChild(document.createTextNode(content));
+    row.appendChild(bubble);
+    messagesEl.insertBefore(row, thinkingEl);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function updateSend() {
+    sendBtn.disabled = loading || !inputEl.value.trim();
+}
+
+function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    } else updateSend();
+}
+
+function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+    updateSend();
+}
+
+async function sendMessage() {
+    const text = inputEl.value.trim();
+    if (!text || loading) return;
+
+    addMessage('user', text);
+    history.push({ role: 'user', content: text });
+
+    inputEl.value = '';
+    autoResize(inputEl);
+    updateSend();
+
+    loading = true;
+    thinkingEl.style.display = 'flex';
+
+    const model = modelSelect.value;
+
+    try {
+        const res = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ model, message: text, history })
+        });
+
+        const data = await res.json();
+        const reply = data.reply || 'No response.';
+        addMessage('assistant', reply);
+        history.push({ role: 'assistant', content: reply });
+
+    } catch (err) {
+        addMessage('assistant', '⚠ Error: ' + err.message);
+    }
+
+    loading = false;
+    thinkingEl.style.display = 'none';
+    updateSend();
+}
+</script>
+
+</body>
+</html>
