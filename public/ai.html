@@ -27,18 +27,18 @@
         padding: 18px 22px;
     }
 
-    /* MAIN PANEL */
-    #panel {
-        border: 1px solid var(--green);
-        padding: 10px 12px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    #panel-header {
+    /* HEADER ABOVE PANEL */
+    #header {
         font-size: 13px;
         letter-spacing: 2px;
+        margin-bottom: 12px; /* this preserves the blank line */
+    }
+
+    /* BORDER BOX */
+    #panel {
+        border: 1px solid var(--green); /* thin border */
+        padding: 10px 12px;
+        margin-bottom: 14px;
     }
 
     #panel-text {
@@ -47,11 +47,12 @@
         white-space: pre-wrap;
     }
 
-    /* SUGGESTIONS */
+    /* BUTTONS */
     #suggestions {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         gap: 8px;
+        margin-bottom: 14px;
     }
 
     .sug-btn {
@@ -66,7 +67,6 @@
 
     /* INPUT BAR */
     #input-area {
-        margin-top: 12px;
         display: flex;
         gap: 8px;
         align-items: center;
@@ -104,21 +104,21 @@
 
 <body>
 
-<div id="panel">
-    <div id="panel-header">AI ASSISTANT // SYSTEM ONLINE //</div>
+<div id="header">AI ASSISTANT // SYSTEM ONLINE //</div>
 
+<div id="panel">
     <div id="panel-text">
 Hello. I'm your school AI assistant. I can help with homework, answer general questions, create files, or assist with portal support. What do you need?
     </div>
+</div>
 
-    <div id="suggestions">
-        <button class="sug-btn" onclick="useSuggestion(this)">Help me with my homework</button>
-        <button class="sug-btn" onclick="useSuggestion(this)">What are good study tips?</button>
-        <button class="sug-btn" onclick="useSuggestion(this)">Explain photosynthesis</button>
-        <button class="sug-btn" onclick="useSuggestion(this)">How do I reset my password?</button>
-        <button class="sug-btn" onclick="useSuggestion(this)">What is the quadratic formula?</button>
-        <button class="sug-btn" onclick="useSuggestion(this)">Give me tips for exams</button>
-    </div>
+<div id="suggestions">
+    <button class="sug-btn" onclick="useSuggestion(this)">Help me with my homework</button>
+    <button class="sug-btn" onclick="useSuggestion(this)">What are good study tips?</button>
+    <button class="sug-btn" onclick="useSuggestion(this)">Explain photosynthesis</button>
+    <button class="sug-btn" onclick="useSuggestion(this)">How do I reset my password?</button>
+    <button class="sug-btn" onclick="useSuggestion(this)">What is the quadratic formula?</button>
+    <button class="sug-btn" onclick="useSuggestion(this)">Give me tips for exams</button>
 </div>
 
 <div id="input-area">
@@ -157,7 +157,7 @@ async function sendMessage() {
             body: JSON.stringify({ message: text })
         });
     } catch (err) {
-        // no extra UI, just fail silently
+        // silent fail, just like Base44
     }
 
     inputEl.value = '';
