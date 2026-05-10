@@ -9,7 +9,6 @@
     :root {
         --bg: #000000;
         --green: #3dfc3d;
-        --green-soft: #7bff7b;
     }
 
     * {
@@ -28,51 +27,32 @@
         padding: 18px 22px;
     }
 
-    /* HEADER (TOP-LEFT) */
+    /* HEADER */
     #header {
-        margin-bottom: 18px;
+        margin-bottom: 16px;
     }
 
     #header-title {
         font-size: 20px;
         letter-spacing: 4px;
         font-weight: bold;
-        text-shadow: 0 0 6px var(--green);
     }
 
-    #header-sub {
-        font-size: 10px;
-        letter-spacing: 3px;
-        margin-top: 4px;
-        color: var(--green-soft);
-    }
-
-    /* MAIN PANEL AREA */
-    #main {
-        flex: 1;
+    /* MAIN PANEL */
+    #panel {
+        border: 1px solid var(--green);
+        padding: 10px 12px;
         display: flex;
         flex-direction: column;
+        gap: 10px;
     }
 
-    /* AI PANEL */
-    #ai-panel {
-        border: 1px solid var(--green);
-        box-shadow: 0 0 10px rgba(61,252,61,0.4);
-        padding: 10px 12px;
-        margin-bottom: 14px;
-    }
-
-    #ai-panel-label {
+    #panel-label {
         font-size: 11px;
         letter-spacing: 2px;
-        margin-bottom: 6px;
     }
 
-    #ai-panel-label span {
-        opacity: 0.7;
-    }
-
-    #ai-panel-text {
+    #panel-text {
         font-size: 13px;
         line-height: 1.6;
         white-space: pre-wrap;
@@ -80,9 +60,8 @@
 
     /* SUGGESTIONS */
     #suggestions {
-        margin-top: 10px;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         gap: 8px;
     }
 
@@ -92,24 +71,14 @@
         color: var(--green);
         padding: 6px 10px;
         font-size: 11px;
-        letter-spacing: 1px;
-        text-transform: uppercase;
         cursor: pointer;
-        box-shadow: 0 0 6px rgba(61,252,61,0.25);
-        transition: 0.15s ease;
         text-align: left;
-    }
-
-    .sug-btn:hover {
-        background: rgba(61,252,61,0.12);
-        box-shadow: 0 0 10px rgba(61,252,61,0.5);
     }
 
     /* INPUT BAR */
     #input-area {
         margin-top: auto;
-        padding-top: 10px;
-        border-top: 1px solid rgba(61,252,61,0.4);
+        padding-top: 12px;
         display: flex;
         gap: 8px;
         align-items: center;
@@ -125,7 +94,7 @@
     }
 
     #msg-input::placeholder {
-        color: rgba(61,252,61,0.6);
+        color: rgba(61,252,61,0.7);
     }
 
     #send-btn {
@@ -136,20 +105,11 @@
         font-size: 11px;
         letter-spacing: 2px;
         cursor: pointer;
-        text-transform: uppercase;
-        box-shadow: 0 0 6px rgba(61,252,61,0.25);
-        transition: 0.15s ease;
     }
 
     #send-btn:disabled {
         opacity: 0.4;
         cursor: not-allowed;
-        box-shadow: none;
-    }
-
-    #send-btn:not(:disabled):hover {
-        background: rgba(61,252,61,0.12);
-        box-shadow: 0 0 10px rgba(61,252,61,0.5);
     }
 </style>
 </head>
@@ -158,30 +118,27 @@
 
 <div id="header">
     <div id="header-title">AI ASSISTANT</div>
-    <div id="header-sub">AI_ASSISTANT // SYSTEM ONLINE //</div>
 </div>
 
-<div id="main">
-    <div id="ai-panel">
-        <div id="ai-panel-label">► <span>AI_ASSISTANT</span></div>
-        <div id="ai-panel-text">
+<div id="panel">
+    <div id="panel-label">AI_ASSISTANT // SYSTEM ONLINE //</div>
+    <div id="panel-text">
 Hello. I'm your school AI assistant. I can help with homework, answer general questions, create files, or assist with portal support. What do you need?
-        </div>
-
-        <div id="suggestions">
-            <button class="sug-btn" onclick="useSuggestion(this)">Help me with my homework</button>
-            <button class="sug-btn" onclick="useSuggestion(this)">What are good study tips?</button>
-            <button class="sug-btn" onclick="useSuggestion(this)">Explain photosynthesis</button>
-            <button class="sug-btn" onclick="useSuggestion(this)">How do I reset my password?</button>
-            <button class="sug-btn" onclick="useSuggestion(this)">What is the quadratic formula?</button>
-            <button class="sug-btn" onclick="useSuggestion(this)">Give me tips for exams</button>
-        </div>
     </div>
 
-    <div id="input-area">
-        <input id="msg-input" type="text" placeholder="TYPE YOUR QUERY..." oninput="updateSend()" onkeydown="handleKey(event)">
-        <button id="send-btn" onclick="sendMessage()" disabled>SEND</button>
+    <div id="suggestions">
+        <button class="sug-btn" onclick="useSuggestion(this)">Help me with my homework</button>
+        <button class="sug-btn" onclick="useSuggestion(this)">What are good study tips?</button>
+        <button class="sug-btn" onclick="useSuggestion(this)">Explain photosynthesis</button>
+        <button class="sug-btn" onclick="useSuggestion(this)">How do I reset my password?</button>
+        <button class="sug-btn" onclick="useSuggestion(this)">What is the quadratic formula?</button>
+        <button class="sug-btn" onclick="useSuggestion(this)">Give me tips for exams</button>
     </div>
+</div>
+
+<div id="input-area">
+    <input id="msg-input" type="text" placeholder="TYPE YOUR QUERY..." oninput="updateSend()" onkeydown="handleKey(event)">
+    <button id="send-btn" onclick="sendMessage()" disabled>SEND</button>
 </div>
 
 <script>
@@ -208,19 +165,14 @@ async function sendMessage() {
     const text = inputEl.value.trim();
     if (!text) return;
 
-    // Static panel version: just send to backend, no chat history UI
     try {
-        const res = await fetch('/api/chat', {
+        await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: text })
         });
-        const data = await res.json();
-        // You can log or later display this if you want,
-        // but per your request we do not add extra UI elements.
-        console.log('AI reply:', data.reply);
     } catch (err) {
-        console.error('Error:', err);
+        // no extra UI, just fail silently
     }
 
     inputEl.value = '';
