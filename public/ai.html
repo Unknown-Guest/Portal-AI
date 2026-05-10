@@ -31,20 +31,24 @@
     #header {
         font-size: 13px;
         letter-spacing: 2px;
-        margin-bottom: 12px; /* this preserves the blank line */
+        margin-bottom: 12px; /* preserves the blank line */
     }
 
     /* BORDER BOX */
     #panel {
         border: 1px solid var(--green); /* thin border */
         padding: 10px 12px;
-        margin-bottom: 14px;
     }
 
     #panel-text {
         font-size: 13px;
         line-height: 1.6;
         white-space: pre-wrap;
+    }
+
+    /* SPACER pushes buttons + input to bottom */
+    #spacer {
+        flex: 1;
     }
 
     /* BUTTONS */
@@ -112,6 +116,9 @@ Hello. I'm your school AI assistant. I can help with homework, answer general qu
     </div>
 </div>
 
+<!-- This spacer forces the bottom section to stay at the bottom -->
+<div id="spacer"></div>
+
 <div id="suggestions">
     <button class="sug-btn" onclick="useSuggestion(this)">Help me with my homework</button>
     <button class="sug-btn" onclick="useSuggestion(this)">What are good study tips?</button>
@@ -157,7 +164,7 @@ async function sendMessage() {
             body: JSON.stringify({ message: text })
         });
     } catch (err) {
-        // silent fail, just like Base44
+        // silent fail, same behavior as Base44
     }
 
     inputEl.value = '';
