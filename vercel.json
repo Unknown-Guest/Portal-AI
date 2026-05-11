@@ -13,3 +13,15 @@
     }
   ]
 }
+{
+  "routes": [
+    {
+      "src": "/ai.html",
+      "dest": "/public/ai.html"
+    },
+    {
+      "src": "/",
+      "dest": "/public/index.html"
+    }
+  ]
+}
