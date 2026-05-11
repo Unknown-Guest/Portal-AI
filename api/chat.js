@@ -1,31 +1,48 @@
 export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).end();
+    try {
 
-  const { model, message } = req.body || {};
-  if (!message) return res.status(400).json({ error: 'Missing message' });
+        const { provider, model, messages } = req.body;
 
-  let reply = '';
+        let url = "";
+        let key = "";
 
-  try {
-    if (model === 'gemini') reply = await callGemini(message);
-    else if (model === 'copilot') reply = await callCopilot(message);
-    else reply = await callGroq(message);
+        if (provider === "groq") {
+            url = "https://api.groq.com/openai/v1/chat/completions";
+            key = process.env.GROQ_API_KEY;
+        }
 
-    res.status(200).json({ reply });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-}
+        else if (provider === "openrouter") {
+            url = "https://openrouter.ai/api/v1/chat/completions";
+            key = process.env.OPENROUTER_API_KEY;
+        }
 
-// STUBS — replace with real API calls later
-async function callGemini(msg) {
-  return `Gemini (stub): ${msg}`;
-}
+        else {
+            return res.status(400).json({ error: "Invalid provider" });
+        }
 
-async function callCopilot(msg) {
-  return `Copilot (stub): ${msg}`;
-}
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + key,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                model,
+                messages: [
+                    {
+                        role: "system",
+                        content: "You are AI HUB, a helpful coding assistant."
+                    },
+                    ...messages
+                ]
+            })
+        });
 
-async function callGroq(msg) {
-  return `Groq (stub): ${msg}`;
+        const data = await response.json();
+
+        res.status(200).json(data);
+
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 }
